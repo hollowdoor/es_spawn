@@ -1,11 +1,23 @@
 {
   "name": "es-spawn",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Quentin Engles <hollowdoor99@gmail.com> (https://hollowdoor.github.io/)",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hollowdoor/es_spawn.git"
+  },
+  "keywords": [
+    "spawn",
+    "child_process"
+  ],
+  "bugs": {
+    "url": "https://github.com/hollowdoor/es_spawn/issues"
+  },
+  "homepage": "https://github.com/hollowdoor/es_spawn#readme",
+  "description": ""
 }
