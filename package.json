@@ -1,9 +1,11 @@
 {
   "name": "es-spawn",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/bundle.js",
+  "jsnext:main": "dist/bundle.es.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rollup -c"
   },
   "author": "Quentin Engles <hollowdoor99@gmail.com> (https://hollowdoor.github.io/)",
   "license": "MIT",
@@ -19,5 +21,15 @@
     "url": "https://github.com/hollowdoor/es_spawn/issues"
   },
   "homepage": "https://github.com/hollowdoor/es_spawn#readme",
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "babel-preset-es2015-rollup": "^1.2.0"
+  },
+  "dependencies": {
+    "babel-plugin-transform-async-to-generator": "^6.16.0",
+    "rollup": "^0.36.4",
+    "rollup-plugin-babel": "^2.6.1",
+    "rollup-plugin-node-resolve": "^2.0.0",
+    "tmp": "0.0.31"
+  }
 }
