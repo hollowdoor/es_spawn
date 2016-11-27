@@ -4,15 +4,13 @@ import {
     _writeFile as writeFile,
     createTmp
 } from './lib/myfs';
-import rollup from 'rollup';
-import nodeResolve from 'rollup-plugin-node-resolve';
-import babel from 'rollup-plugin-babel';
+import rollit from './lib/rollit';
 import path from 'path';
 import tmp from 'tmp';
 const cwd = process.cwd();
 
-
 export default function esSpawn(name, args=[], options={}){
+
     let source = path.join(cwd, name);
     let filename = name.replace(/[.]\//, '');
     let argv = [].concat(args);
@@ -21,64 +19,16 @@ export default function esSpawn(name, args=[], options={}){
 
     options.execArgv = options.execArgv || process.execArgv;
 
-    function createHead(){
-        return `'use strict';
-__dirname="${cwd}";
-__filename="${filename}";
-process.argv[0] = "${argv0}";
-process.argv.splice(1, 1, "${name}");
-        `
-    }
-
-    let babelSettings = {plugins: ['transform-async-to-generator']};
-
-    try{
-        let babelrc = require(path.join(cwd, '.babelrc'));
-        babelSettings = {};
-    }catch(e){}
-
     let init = Promise.all([
-        rollup.rollup({
-            entry: source,
-            plugins: [
-                nodeResolve({jsnext: true, module: true, main: true}),
-                //babel({plugins: ['transform-async-to-generator']})
-                babel(babelSettings)
-            ],
-            acorn: {
-                allowHashBang: true
-            },
-            onwarn: (warning)=>{
-                //No need for warnings.
-                //Try to act like a normal child process.
-                if(esSpawn.showWarning){
-                    console.log(warning);
-                }
-            }
-        }).then(bundle=>{
-            let code = bundle.generate({
-                format: 'cjs'
-            }).code;
-
-            let strictReg = /^(['"])use strict\1;/;
-            let bangReg = /\n#[!][^\n]+?\n/;
-
-            //Get rid of that pesky hash bang.
-            if(bangReg.test(code)){
-                code = code.replace(bangReg, '');
-            }
-
-            //Replace some globals to make things look normal.
-            //The globals changed because the new script is in a tmp diractory.
-            code = code.replace(strictReg, createHead());
-
-            if(esSpawn.saveSource){
-                writeFile(path.join(cwd, 'source.'+filename), code)
+        rollit(source, {
+            showWarning: esSpawn.showWarning,
+            createHead: createHead
+        }).then(code=>{
+            if(options['sourceOutput']){
+                writeFile(path.join(cwd, options.sourceOutput), code)
                 .catch((err)=>console.log(err));
             }
-
             return code;
-
         }),
         createTmp()
     ]);
@@ -98,7 +48,18 @@ process.argv.splice(1, 1, "${name}");
             resolve(child);
         }).catch(reject);
     });
+
+    function createHead(){
+        return `'use strict';
+__dirname="${cwd}";
+__filename="${filename}";
+process.argv[0] = "${argv0}";
+process.argv.splice(1, 1, "${name}");
+        `
+    }
+
 }
+
 
 function createExecPath(options){
     if(typeof options.execPath === 'string'){

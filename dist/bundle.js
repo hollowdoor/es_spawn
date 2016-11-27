@@ -10,6 +10,15 @@ var nodeResolve = _interopDefault(require('rollup-plugin-node-resolve'));
 var babel = _interopDefault(require('rollup-plugin-babel'));
 var path = _interopDefault(require('path'));
 
+function _readFile(name){
+    return new Promise((resolve, reject)=>{
+        fs.readFile(name, 'utf8', (err, string)=>{
+            if(err){ return reject(err); }
+            resolve(string);
+        });
+    });
+}
+
 function _writeFile(name, contents){
     return new Promise((resolve, reject)=>{
         fs.writeFile(name, contents, (err)=>{
@@ -29,40 +38,16 @@ function createTmp(){
     });
 }
 
-const cwd = process.cwd();
+function rollit(source, options){
 
+    const createHead = options.createHead;
 
-function esSpawn(name, args=[], options={}){
-    let source = path.join(cwd, name);
-    let filename = name.replace(/[.]\//, '');
-    let argv = [].concat(args);
-    let argv0 = typeof options.argv0 === 'string'
-        ? options.argv0 : process.execPath;
+    return getBabelSettings().then(babelSettings=>{
 
-    options.execArgv = options.execArgv || process.execArgv;
-
-    function createHead(){
-        return `'use strict';
-__dirname="${cwd}";
-__filename="${filename}";
-process.argv[0] = "${argv0}";
-process.argv.splice(1, 1, "${name}");
-        `
-    }
-
-    let babelSettings = {plugins: ['transform-async-to-generator']};
-
-    try{
-        let babelrc = require(path.join(cwd, '.babelrc'));
-        babelSettings = {};
-    }catch(e){}
-
-    let init = Promise.all([
-        rollup.rollup({
+        return rollup.rollup({
             entry: source,
             plugins: [
                 nodeResolve({jsnext: true, module: true, main: true}),
-                //babel({plugins: ['transform-async-to-generator']})
                 babel(babelSettings)
             ],
             acorn: {
@@ -71,7 +56,7 @@ process.argv.splice(1, 1, "${name}");
             onwarn: (warning)=>{
                 //No need for warnings.
                 //Try to act like a normal child process.
-                if(esSpawn.showWarning){
+                if(options.showWarning){
                     console.log(warning);
                 }
             }
@@ -92,13 +77,45 @@ process.argv.splice(1, 1, "${name}");
             //The globals changed because the new script is in a tmp diractory.
             code = code.replace(strictReg, createHead());
 
-            if(esSpawn.saveSource){
-                _writeFile(path.join(cwd, 'source.'+filename), code)
-                .catch((err)=>console.log(err));
-            }
-
             return code;
 
+        });
+    });
+
+}
+
+function getBabelSettings(){
+    return _readFile(path.join(process.cwd(), '.babelrc'))
+    .then(
+        contents=>{},
+        error=>{
+            return {plugins: ['transform-async-to-generator']}
+        }
+    );
+}
+
+const cwd = process.cwd();
+
+function esSpawn(name, args=[], options={}){
+
+    let source = path.join(cwd, name);
+    let filename = name.replace(/[.]\//, '');
+    let argv = [].concat(args);
+    let argv0 = typeof options.argv0 === 'string'
+        ? options.argv0 : process.execPath;
+
+    options.execArgv = options.execArgv || process.execArgv;
+
+    let init = Promise.all([
+        rollit(source, {
+            showWarning: esSpawn.showWarning,
+            createHead: createHead
+        }).then(code=>{
+            if(options['sourceOutput']){
+                _writeFile(path.join(cwd, options.sourceOutput), code)
+                .catch((err)=>console.log(err));
+            }
+            return code;
         }),
         createTmp()
     ]);
@@ -118,7 +135,18 @@ process.argv.splice(1, 1, "${name}");
             resolve(child);
         }).catch(reject);
     });
+
+    function createHead(){
+        return `'use strict';
+__dirname="${cwd}";
+__filename="${filename}";
+process.argv[0] = "${argv0}";
+process.argv.splice(1, 1, "${name}");
+        `
+    }
+
 }
+
 
 function createExecPath(options){
     if(typeof options.execPath === 'string'){
