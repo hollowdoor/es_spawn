@@ -1,8 +1,9 @@
 'use strict';
-__dirname="/home/spirit/Projects/JSLibs/es_fork/test";
+__dirname="/home/spirit/Projects/JSLibs/es_spawn/test";
 __filename="script.js";
+process.argv[0] = "thing";
 process.argv.splice(1, 1, "./script.js");
-            
+        
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
