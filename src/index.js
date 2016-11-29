@@ -86,7 +86,7 @@ function createOptions(options, argv0){
     }
 
     if(options['stdio'] === undefined){
-        options.stdio = [0, 1, 2, 'ipc'];
+        options.stdio = [0, 1, 2];
     }
 
     return options;
