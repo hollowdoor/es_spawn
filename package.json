@@ -4,7 +4,7 @@
   "main": "dist/bundle.js",
   "jsnext:main": "dist/bundle.es.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "cd test && node run.js",
     "build": "rollup -c"
   },
   "author": "Quentin Engles <hollowdoor99@gmail.com> (https://hollowdoor.github.io/)",
