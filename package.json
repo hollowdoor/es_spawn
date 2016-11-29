@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "babel-plugin-transform-async-to-generator": "^6.16.0",
+    "babel-preset-stage-3": "^6.17.0",
     "rollup": "^0.36.4",
     "rollup-plugin-babel": "^2.6.1",
     "rollup-plugin-node-resolve": "^2.0.0",

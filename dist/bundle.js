@@ -89,7 +89,8 @@ function getBabelSettings(){
     .then(
         contents=>{},
         error=>{
-            return {plugins: ['transform-async-to-generator']}
+            //return {plugins: ['transform-async-to-generator']}
+            return {presets: ["stage-3"]};
         }
     );
 }
