@@ -4,7 +4,7 @@
   "main": "dist/bundle.js",
   "jsnext:main": "dist/bundle.es.js",
   "scripts": {
-    "test": "npm run build && cd test && node run.js",
+    "test": "npm run build && cd test && node run.js script.js",
     "build": "rollup -c"
   },
   "author": "Quentin Engles <hollowdoor99@gmail.com> (https://hollowdoor.github.io/)",
