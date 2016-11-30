@@ -141,6 +141,7 @@ function esSpawn(name, args=[], options={}){
 __dirname="${cwd}";
 __filename="${filename}";
 process.argv[0] = "${argv0}";
+process.argv.splice(1, 1);
 `
     }
 
