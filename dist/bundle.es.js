@@ -92,8 +92,6 @@ function getBabelSettings(){
 
 const cwd = process.cwd();
 
-console.log('process.argv ',process.argv);
-
 function esSpawn(name, args=[], options={}){
 
     let source = path.join(cwd, name);
@@ -165,7 +163,6 @@ function createExecPath(options){
 function createArgv(options, processName, argv){
     let _argv = argv = [processName].concat(argv);
     _argv = options.execArgv.concat(argv);
-    //console.log('_argv ',_argv);
     return _argv;
 }
 
