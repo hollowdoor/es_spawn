@@ -85,7 +85,6 @@ function getBabelSettings(){
     .then(
         contents=>{},
         error=>{
-            //return {plugins: ['transform-async-to-generator']}
             return {presets: ["stage-3"]};
         }
     );
@@ -138,8 +137,7 @@ function esSpawn(name, args=[], options={}){
 __dirname="${cwd}";
 __filename="${filename}";
 process.argv[0] = "${argv0}";
-process.argv.splice(1, 1, "${name}");
-        `
+`
     }
 
 }
@@ -170,7 +168,7 @@ function createOptions(options, argv0){
     }
 
     if(options['stdio'] === undefined){
-        options.stdio = [0, 1, 2, 'ipc'];
+        options.stdio = [0, 1, 2];
     }
 
     return options;
