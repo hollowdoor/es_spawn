@@ -48,11 +48,12 @@ spawn('./script.js').then(child=>{
 API
 ---
 
-The interface for `es-spawn` is identical to node's [child_process spawn](https://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options).
+The interface for `es-spawn` is identical to node's [child_process spawn](https://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options). The only exception is that only javascript files can be used. In other words `es-spawn` works like a fork of a node process.
 
 ### spawn(command, argv, options) -> child_process
 
 You can run the fork as if you were using `require('child_process').spawn`.
+
 
 About
 -----
