@@ -149,7 +149,7 @@ ${createArgvString()}
 
         return `
         process.argv[0] = '${argv0}';
-        process.argv.splice(1, 1, '${name}');`;
+        process.argv.splice(1, 1, "${name}");`;
     }
 
 }
