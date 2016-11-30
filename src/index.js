@@ -9,6 +9,8 @@ import path from 'path';
 import tmp from 'tmp';
 const cwd = process.cwd();
 
+console.log('process.argv ',process.argv)
+
 export default function esSpawn(name, args=[], options={}){
 
     let source = path.join(cwd, name);
@@ -51,11 +53,20 @@ export default function esSpawn(name, args=[], options={}){
 
     function createHead(){
         return `'use strict';
-__dirname="${cwd}";
-__filename="${filename}";
-process.argv[0] = "${argv0}";
-process.argv.splice(1, 1);
+__dirname="${cwd}"; __filename="${source}";
+${createArgvString()}
 `
+    }
+
+    function createArgvString(){
+
+        if(argv0 === process.execPath){
+            return `process.argv.splice(1, 1, "${name}");`;
+        }
+
+        return `
+        process.argv[0] = '${argv0}';
+        process.argv.splice(1, 1, '${name}');`;
     }
 
 }
