@@ -11,7 +11,12 @@ const cwd = process.cwd();
 
 export default function esSpawn(name, args=[], options={}){
 
-    let source = path.join(cwd, name);
+    //let source = path.join(cwd, name);
+    let source = name;
+    if(!/^\//.test(source)){
+        source = path.join(cwd, name);
+    }
+    
     let filename = name.replace(/[.]\//, '');
     let argv = [].concat(args);
     let argv0 = typeof options.argv0 === 'string'

@@ -13,6 +13,15 @@ export default function rollit(source, options){
         return rollup.rollup({
             entry: source,
             plugins: [
+                {
+                    resolveId: function (importee, importer) {
+
+                        if(importer && /^\//.test(importee)){
+                            return importee;
+                        }
+                        return null;
+                    }
+                },
                 nodeResolve({jsnext: true, module: true, main: true}),
                 babel(babelSettings)
             ],
@@ -55,7 +64,7 @@ function getBabelSettings(){
     .then(
         contents=>{},
         error=>{
-            return {presets: ["stage-3"]};
+            return {presets: [require.resolve("babel-preset-stage-3")]};
         }
     );
 }

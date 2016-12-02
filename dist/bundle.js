@@ -47,6 +47,15 @@ function rollit(source, options){
         return rollup.rollup({
             entry: source,
             plugins: [
+                {
+                    resolveId: function (importee, importer) {
+
+                        if(importer && /^\//.test(importee)){
+                            return importee;
+                        }
+                        return null;
+                    }
+                },
                 nodeResolve({jsnext: true, module: true, main: true}),
                 babel(babelSettings)
             ],
@@ -89,7 +98,7 @@ function getBabelSettings(){
     .then(
         contents=>{},
         error=>{
-            return {presets: ["stage-3"]};
+            return {presets: [require.resolve("babel-preset-stage-3")]};
         }
     );
 }
@@ -98,7 +107,12 @@ const cwd = process.cwd();
 
 function esSpawn(name, args=[], options={}){
 
-    let source = path.join(cwd, name);
+    //let source = path.join(cwd, name);
+    let source = name;
+    if(!/^\//.test(source)){
+        source = path.join(cwd, name);
+    }
+    
     let filename = name.replace(/[.]\//, '');
     let argv = [].concat(args);
     let argv0 = typeof options.argv0 === 'string'
